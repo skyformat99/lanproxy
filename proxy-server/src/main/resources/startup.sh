@@ -7,7 +7,7 @@ LOGS_DIR=$DEPLOY_DIR/logs
 
 APP_MAINCLASS=org.fengfei.lanproxy.server.ProxyServerContainer
 
-PIDS=`ps -ef | grep java | grep "$CONF_DIR" |awk '{print $2}'`
+PIDS=`ps -ef | grep -v grep | grep "$CONF_DIR" |awk '{print $2}'`
 if [ -n "$PIDS" ]; then
     echo "ERROR: already started!"
     echo "PID: $PIDS"
@@ -21,7 +21,7 @@ STDOUT_FILE=$LOGS_DIR/stdout.log
 CLOG_FILE=$LOGS_DIR/gc.log
 
 LIB_DIR=$DEPLOY_DIR/lib
-LIB_JARS=`ls $LIB_DIR|grep .jar|awk '{print "'$LIB_DIR'/"$0}'|tr "\n" ":"`
+LIB_JARS=`ls $LIB_DIR|grep .jar|awk '{print "'$LIB_DIR'/"$0}'| xargs | sed "s/ /:/g"`
 
 JAVA_OPTS=" -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true "
 JAVA_DEBUG_OPTS=""

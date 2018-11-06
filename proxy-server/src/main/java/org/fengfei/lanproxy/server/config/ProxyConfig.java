@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -170,7 +171,7 @@ public class ProxyConfig implements Serializable {
                 }
 
                 in.close();
-                proxyMappingConfigJson = new String(out.toByteArray());
+                proxyMappingConfigJson = new String(out.toByteArray(), Charset.forName("UTF-8"));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -210,13 +211,15 @@ public class ProxyConfig implements Serializable {
         this.inetPortLanInfoMapping = inetPortLanInfoMapping;
         this.clients = clients;
 
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            out.write(proxyMappingConfigJson.getBytes());
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (proxyMappingConfigJson != null) {
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                out.write(proxyMappingConfigJson.getBytes(Charset.forName("UTF-8")));
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         notifyconfigChangedListeners();
@@ -317,6 +320,8 @@ public class ProxyConfig implements Serializable {
         /** 代理客户端与其后面的真实服务器映射关系 */
         private List<ClientProxyMapping> proxyMappings;
 
+        private int status;
+
         public String getClientKey() {
             return clientKey;
         }
@@ -339,6 +344,14 @@ public class ProxyConfig implements Serializable {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
         }
 
     }
